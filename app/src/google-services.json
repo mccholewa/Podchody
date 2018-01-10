@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "103130277524",
+    "firebase_url": "https://podchody-fe363.firebaseio.com",
+    "project_id": "podchody-fe363",
+    "storage_bucket": "podchody-fe363.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:103130277524:android:76e6508ff64a5ff2",
+        "android_client_info": {
+          "package_name": "com.podchody"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "103130277524-519dd3daqbdc0q7pa8t52em9clp6fu21.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.podchody",
+            "certificate_hash": "4a0f49f189a4a33f3d426781543d552a944a44df"
+          }
+        },
+        {
+          "client_id": "103130277524-1vljp7p4r6pj17n0se2j2h5let3r8r1v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSzwh37JCmNhBz2fl6eLYTLH8-ggSbFko"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "103130277524-1vljp7p4r6pj17n0se2j2h5let3r8r1v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
