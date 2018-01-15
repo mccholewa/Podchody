@@ -1,4 +1,4 @@
-package com.podchody.common
+package com.podchody.ui.common
 
 /**
  * Created by Misiu on 10.01.2018.

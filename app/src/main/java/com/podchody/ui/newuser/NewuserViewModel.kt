@@ -13,21 +13,16 @@ import com.podchody.util.LiveDataDelegate
 import com.podchody.util.UiActionsLiveData
 import javax.inject.Inject
 
-class NewUserViewModel
+class NewuserViewModel
 @Inject constructor(
         private val navigationController: NavigationController,
         private val coroutines: Coroutines
 ) : ViewModel(){
 
-    val liveData = LiveDataDelegate(NewUserViewState())
+    val liveData = LiveDataDelegate(NewuserViewState())
 
     private var state by liveData
 
     val uiActions = UiActionsLiveData()
 
-    fun NewUser() = coroutines {
-        val login = state.login
-        val password = state.password
-
-    }
 }

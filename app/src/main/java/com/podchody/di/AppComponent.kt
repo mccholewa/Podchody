@@ -9,7 +9,7 @@ import dagger.BindsInstance
 import dagger.Component
 import com.podchody.NavigationController
 import com.podchody.ui.login.LoginViewModel
-import com.podchody.ui.newuser.NewUserViewModel
+import com.podchody.ui.newuser.NewuserViewModel
 import javax.inject.Singleton
 
 @Singleton
@@ -18,7 +18,7 @@ interface AppComponent {
 
     val loginViewModel: LoginViewModel
 
-    val newAccountViewModel: NewUserViewModel
+    val newuserViewModel: NewuserViewModel
 
     val navigationController: NavigationController
 

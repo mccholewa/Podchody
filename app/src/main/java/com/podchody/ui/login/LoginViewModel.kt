@@ -25,9 +25,6 @@ class LoginViewModel
 
     val uiActions = UiActionsLiveData()
 
-    fun loginUser() = coroutines {
-        val login = state.login
-        val password = state.password
-
+    fun openNewuser() { uiActions { navigationController.navigateToNewuser(it)}
     }
 }

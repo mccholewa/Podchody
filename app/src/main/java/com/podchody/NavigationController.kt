@@ -6,7 +6,7 @@ package com.podchody
 
 import android.support.v4.app.FragmentActivity
 import com.podchody.ui.login.LoginFragment
-import com.podchody.ui.newuser.NewUserFragment
+import com.podchody.ui.newuser.NewuserFragment
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,10 +19,10 @@ import javax.inject.Singleton
                 .commitAllowingStateLoss()
     }
 
-    fun navigateToNewUser(activity: FragmentActivity){
-        val newUserFragment = NewUserFragment()
+    fun navigateToNewuser(activity: FragmentActivity){
+        val newuserFragment = NewuserFragment()
         activity.supportFragmentManager.beginTransaction()
-                .replace(R.id.container, newUserFragment)
+                .replace(R.id.container, newuserFragment)
                 .commitAllowingStateLoss()
 
     }
