@@ -11,8 +11,7 @@ import kotlin.reflect.KProperty
 
 class LiveDataDelegate<T: Any>(
         initialState: T,
-        private val liveData: MutableLiveData<T> =
-        MutableLiveData<T>()
+        private val liveData: MutableLiveData<T> = MutableLiveData<T>()
 ): LiveDataObservable<T> {
 
     init {
@@ -21,6 +20,7 @@ class LiveDataDelegate<T: Any>(
 
     override fun observe(owner: LifecycleOwner, observer: (T) -> Unit) =
             liveData.observe(owner, Observer { observer(it!!) })
+
 
     override fun observeForever(observer: (T) -> Unit) =
             liveData.observeForever { observer(it!!) }

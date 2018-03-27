@@ -4,14 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <veriable
+        <variable
             name="viewModel"
-            type="com.podchody.ui.newuser.NewuserViewModel"
-            />
-        <verable
+            type="com.podchody.ui.register.RegisterViewModel" />
+        <variable
             name="state"
-            type="com.podchody.ui.newuser.NewuserViewState"
-            />
+            type="com.podchody.ui.register.RegisterViewState" />
     </data>
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -31,16 +29,17 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
-            android:id="@+id/email"
+            android:id="@+id/email_register"
             android:layout_width="200dp"
             android:layout_height="0dp"
             android:layout_marginTop="20dp"
             android:hint="@string/email_hint"
-            android:imeOptions="actionSearch"
+            android:text="@={state.email}"
             android:inputType="textEmailAddress"
             app:layout_constraintEnd_toEndOf="@+id/new_user"
             app:layout_constraintStart_toStartOf="@+id/new_user"
-            app:layout_constraintTop_toBottomOf="@+id/new_user" />
+            app:layout_constraintTop_toBottomOf="@+id/new_user"
+            tools:text="test"/>
 
         <EditText
             android:id="@+id/password"
@@ -48,17 +47,19 @@
             android:layout_height="0dp"
             android:layout_marginTop="20dp"
             android:hint="@string/password_hint"
+            android:text="@={state.password}"
             android:inputType="textPassword"
-            app:layout_constraintEnd_toEndOf="@+id/email"
-            app:layout_constraintStart_toStartOf="@+id/email"
-            app:layout_constraintTop_toBottomOf="@+id/email" />
+            app:layout_constraintEnd_toEndOf="@+id/email_register"
+            app:layout_constraintStart_toStartOf="@+id/email_register"
+            app:layout_constraintTop_toBottomOf="@+id/email_register" />
 
         <Button
-            android:id="@+id/create_user"
+            android:id="@+id/register"
             android:layout_width="150dp"
             android:layout_height="0dp"
             android:layout_marginTop="20dp"
             android:text="@string/create_user"
+            android:onClick="@{() -> viewModel.registerUser()}"
             app:layout_constraintEnd_toEndOf="@+id/password"
             app:layout_constraintStart_toStartOf="@+id/password"
             app:layout_constraintTop_toBottomOf="@+id/password" />

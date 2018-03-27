@@ -5,20 +5,31 @@ package com.podchody.di
  */
 
 import android.app.Application
+import com.podchody.ViewLibModule
 import dagger.BindsInstance
 import dagger.Component
 import com.podchody.NavigationController
-import com.podchody.ui.login.LoginViewModel
-import com.podchody.ui.newuser.NewuserViewModel
+import com.podchody.PodchodyApp
+import com.podchody.ui.login.LoginModule
+import com.podchody.ui.register.RegisterModule
 import javax.inject.Singleton
+import dagger.android.AndroidInjector
+import dagger.android.support.AndroidSupportInjectionModule
+
+
+
+
 
 @Singleton
-@Component(modules = [AppModule::class])
-interface AppComponent {
-
-    val loginViewModel: LoginViewModel
-
-    val newuserViewModel: NewuserViewModel
+@Component(modules = [
+    ViewLibModule::class,
+    AppModule::class,
+    AndroidInjectorActivityBindingModule::class,
+    AndroidSupportInjectionModule::class,
+    LoginModule::class,
+    RegisterModule::class
+])
+interface AppComponent : AndroidInjector<PodchodyApp> {
 
     val navigationController: NavigationController
 
@@ -28,3 +39,20 @@ interface AppComponent {
         fun build(): AppComponent
     }
 }
+
+//@Singleton
+//@Component(modules = [ViewLibModule::class])
+//interface AppComponent {
+//
+//    val loginViewModel: LoginViewModel
+//
+//    val registerViewModel: RegisterViewModel
+//
+//    val navigationController: NavigationController
+//
+//    @Component.Builder interface Builder {
+//        @BindsInstance fun application(application: Application): Builder
+//
+//        fun build(): AppComponent
+//    }
+//}

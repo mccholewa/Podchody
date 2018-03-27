@@ -5,3 +5,7 @@ package com.podchody.binding
  */
 
 import android.databinding.BindingAdapter
+import android.databinding.Bindable
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
+import android.widget.TextView

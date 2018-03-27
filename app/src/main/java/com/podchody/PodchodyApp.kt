@@ -5,31 +5,31 @@ package com.podchody
  */
 
 
-import android.app.Application
-import android.content.Context
-import android.support.annotation.VisibleForTesting
-import android.support.v4.app.Fragment
-import com.podchody.di.AppComponent
+import dagger.android.AndroidInjector
+import dagger.android.DaggerApplication
 import com.podchody.di.DaggerAppComponent
 import timber.log.Timber
 
 
-class PodchodyApp : Application() {
+class PodchodyApp : DaggerApplication() {
 
-    @set:VisibleForTesting
-    lateinit var component: AppComponent
-
+    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
+        return DaggerAppComponent.builder().application(this).build()
+    }
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
+            //timber plant
             Timber.plant(Timber.DebugTree())
         }
-        component = DaggerAppComponent.builder().application(this).build()
     }
 }
 
-val Context.component: AppComponent
-    get() = (applicationContext as PodchodyApp).component
 
-val Fragment.component: AppComponent
-    get() = activity!!.component
+////Retrieve the Dagger Component from Context
+//val Context.component : AppComponent
+//    get() = (applicationContext as PodchodyApp).component
+//
+////Retrieve the Dagger Component from Fragment
+//val Fragment.component: AppComponent
+//    get() = activity!!.component

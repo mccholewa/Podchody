@@ -5,12 +5,11 @@ package com.podchody.ui.login
  */
 
 import android.arch.lifecycle.ViewModel
-import android.content.SharedPreferences
+import com.google.firebase.auth.FirebaseAuth
 import com.podchody.NavigationController
 import com.podchody.util.Coroutines
 import com.podchody.util.LiveDataDelegate
 import com.podchody.util.UiActionsLiveData
-import java.util.*
 import javax.inject.Inject
 
 class LoginViewModel
@@ -25,6 +24,9 @@ class LoginViewModel
 
     val uiActions = UiActionsLiveData()
 
-    fun openNewuser() { uiActions { navigationController.navigateToNewuser(it)}
-    }
+    val auth = FirebaseAuth.getInstance()
+
+
+    fun openRegister() = uiActions { navigationController.navigateToRegister(it) }
+
 }

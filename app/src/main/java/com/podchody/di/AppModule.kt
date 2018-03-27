@@ -1,21 +1,19 @@
 package com.podchody.di
 
-/**
- * Created by Misiu on 08.01.2018.
- */
-
-import android.app.Application
-import android.content.SharedPreferences
-import android.preference.PreferenceManager
-import com.podchody.util.AndroidCoroutines
-import com.podchody.util.Coroutines
+import com.podchody.AndroidNavigationController
+import com.podchody.NavigationController
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
-@Module class AppModule {
+/**
+ * Created by Misiu on 27.03.2018.
+ */
 
-    @Provides fun providePrefs(application: Application): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
-
-    @Provides fun coroutines(): Coroutines = AndroidCoroutines()
+@Module
+class AppModule {
+    @Provides
+    @Singleton
+    fun navigationController(androidNavigationController: AndroidNavigationController):
+            NavigationController = androidNavigationController
 }
