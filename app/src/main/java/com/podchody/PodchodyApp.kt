@@ -5,6 +5,15 @@ package com.podchody
  */
 
 
+import android.app.Application
+import android.content.Context
+import android.content.res.Resources
+import android.support.annotation.VisibleForTesting
+import android.support.v4.app.ActivityCompat.startActivityForResult
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.data.model.Resource
+import com.podchody.di.AppComponent
+import com.podchody.di.AppModule
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 import com.podchody.di.DaggerAppComponent
@@ -24,7 +33,6 @@ class PodchodyApp : DaggerApplication() {
         }
     }
 }
-
 
 ////Retrieve the Dagger Component from Context
 //val Context.component : AppComponent

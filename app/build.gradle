@@ -16,6 +16,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        resConfigs "en", "pl"
     }
     buildTypes {
         debug {
@@ -29,6 +30,8 @@ android {
     dataBinding {
         enabled = true
     }
+
+
 }
 
 dependencies {
@@ -44,12 +47,15 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 
 
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    implementation 'com.google.firebase:firebase-core:11.8.0'
-    implementation 'com.google.firebase:firebase-database:11.8.0'
-    implementation 'com.google.firebase:firebase-auth:11.8.0'
+    implementation "com.google.firebase:firebase-core:$firebase_version"
+    implementation "com.google.firebase:firebase-database:$firebase_version"
+    implementation "com.google.firebase:firebase-auth:$firebase_version"
+    implementation "com.firebaseui:firebase-ui-database:$firebaseui_version"
+    implementation "com.firebaseui:firebase-ui-auth:$firebaseui_version"
     implementation "android.arch.lifecycle:runtime:$arch_version"
     implementation "android.arch.lifecycle:extensions:$arch_version"
     implementation 'org.jetbrains.anko:anko-coroutines:0.10.3'

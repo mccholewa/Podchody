@@ -19,6 +19,7 @@
         <TextView
             android:id="@+id/app_name"
             android:text="@string/app_name"
+            android:textAlignment="center"
             android:textSize="50sp"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -35,11 +36,12 @@
             android:layout_height="0dp"
             android:layout_marginTop="20dp"
             android:hint="@string/email_hint"
-            android:text="@{state.login}"
+            android:text="@={state.email}"
             android:inputType="textEmailAddress"
             app:layout_constraintEnd_toEndOf="@+id/app_name"
             app:layout_constraintStart_toStartOf="@+id/app_name"
             app:layout_constraintTop_toBottomOf="@+id/app_name" />
+
 
         <EditText
             android:id="@+id/password"
@@ -47,6 +49,7 @@
             android:layout_height="0dp"
             android:layout_marginTop="20dp"
             android:hint="@string/password_hint"
+            android:text="@={state.password}"
             android:inputType="textPassword"
             app:layout_constraintEnd_toEndOf="@+id/email_login"
             app:layout_constraintStart_toStartOf="@+id/email_login"
@@ -58,6 +61,7 @@
             android:layout_height="0dp"
             android:layout_marginTop="20dp"
             android:text="@string/login_btn"
+            android:onClick="@{() -> viewModel.signin()}"
             app:layout_constraintEnd_toEndOf="@+id/password"
             app:layout_constraintStart_toStartOf="@+id/password"
             app:layout_constraintTop_toBottomOf="@+id/password" />
@@ -66,6 +70,7 @@
             android:id="@+id/or"
             android:text="@string/or"
             android:textSize="15sp"
+            android:textAlignment="center"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginEnd="8dp"

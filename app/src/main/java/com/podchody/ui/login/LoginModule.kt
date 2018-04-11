@@ -5,11 +5,11 @@ package com.podchody.ui.login
  */
 
 import dagger.Module
-import dagger.Provides
 import dagger.android.ContributesAndroidInjector
-import com.podchody.ui.common.getParam
 
 @Module
 abstract class LoginModule {
+
+    @ContributesAndroidInjector
     abstract fun bindLoginFragment(): LoginFragment
 }

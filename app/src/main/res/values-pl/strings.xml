@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Podchody</string>
+    <string name="password_hint">Hasło</string>
+    <string name="login_btn">Zaloguj</string>
+    <string name="or">Lub</string>
+    <string name="create_user">Utwórz nowe konto</string>
+    <string name="email_hint">Adres email</string>
+    <string name="new_user">Nowe Konto</string>
+    <string name="successful">Udane</string>
+    <string name="facebook_app_id">[APP_ID]</string>
+    <string name="fb_login_protocol_scheme">fb[APP_ID]</string>
+</resources>

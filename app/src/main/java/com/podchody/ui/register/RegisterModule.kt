@@ -11,5 +11,7 @@ import com.podchody.ui.common.getParam
 
 @Module
 abstract class RegisterModule {
+
+    @ContributesAndroidInjector
     abstract fun bindRegisterFragment(): RegisterFragment
 }
