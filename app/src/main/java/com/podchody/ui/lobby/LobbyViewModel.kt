@@ -1,14 +1,17 @@
 package com.podchody.ui.lobby
 
 import android.arch.lifecycle.ViewModel
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.podchody.NavigationController
-import com.podchody.api.AuthFb
-import com.podchody.ui.login.LoginViewState
+import com.podchody.util.Coroutines
 import com.podchody.util.LiveDataDelegate
 import com.podchody.util.UiActionsLiveData
+import com.podchody.vo.Lce
+import com.podchody.vo.Resource
+import com.podchody.vo.User
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -17,7 +20,11 @@ import javax.inject.Inject
 
 class LobbyViewModel
 @Inject constructor(
-        private val navigationController: NavigationController
+        private val navigationController: NavigationController,
+        private val database: FirebaseDatabase,
+        private val auth: FirebaseAuth,
+        private val coroutines: Coroutines
+
 ) : ViewModel(){
 
     val liveData = LiveDataDelegate(LobbyViewState())
@@ -26,4 +33,30 @@ class LobbyViewModel
 
     val uiActions = UiActionsLiveData()
 
-}
+   // var onlineRef = database.getReference().child(".info/connected")
+  // var counterRef = database.getReference("LastOnline")
+   // var currenttUserRef= database.getReference("lastOnline").child(auth.currentUser?.uid)
+
+
+    fun testData() {
+            Lce.exec({ state = state.copy(users = it) }) {
+                val items = listOf(
+                    User("misiu2314@gmai.com", "Online"),
+                    User("misiu2314@gmai.com", "Online"),
+                    User("misiu2314@gmai.com", "Online") )
+                UserViewState(items)
+            }
+        }
+    }
+
+//    fun setupListeners(){
+//        val eventListener = object:ValueEventListener{
+//            override fun onDatachange(DataSnapshot dataSnapshot){
+//
+//            }
+//        }
+//        onlineRef.addValueEventListener()
+//
+//
+//    }
+

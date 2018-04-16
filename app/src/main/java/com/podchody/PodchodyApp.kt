@@ -12,6 +12,7 @@ import android.support.annotation.VisibleForTesting
 import android.support.v4.app.ActivityCompat.startActivityForResult
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.data.model.Resource
+import com.google.firebase.auth.FirebaseAuth
 import com.podchody.di.AppComponent
 import com.podchody.di.AppModule
 import dagger.android.AndroidInjector
@@ -27,6 +28,7 @@ class PodchodyApp : DaggerApplication() {
     }
     override fun onCreate() {
         super.onCreate()
+        FirebaseAuth.getInstance().signOut()
         if (BuildConfig.DEBUG) {
             //timber plant
             Timber.plant(Timber.DebugTree())

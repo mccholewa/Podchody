@@ -10,6 +10,5 @@ interface NavigationController {
     fun navigateToLogin(activity: FragmentActivity)
     fun navigateToRegister(activity: FragmentActivity)
     fun navigateToLobby(activity: FragmentActivity)
-    fun navigateToAuth(activity: FragmentActivity)
     fun showError(activity: FragmentActivity, error: String?)
 }

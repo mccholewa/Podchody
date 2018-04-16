@@ -5,7 +5,5 @@ package com.podchody.ui.login
  */
 
 data class LoginViewState(
-        var email: String = "",
-        var password: String = "",
-        val loading: Boolean = false
+       var loggedIn : Boolean = false
 )

@@ -54,6 +54,7 @@ dependencies {
     implementation "com.google.firebase:firebase-core:$firebase_version"
     implementation "com.google.firebase:firebase-database:$firebase_version"
     implementation "com.google.firebase:firebase-auth:$firebase_version"
+    implementation "com.google.firebase:firebase-firestore:$firebase_version"
     implementation "com.firebaseui:firebase-ui-database:$firebaseui_version"
     implementation "com.firebaseui:firebase-ui-auth:$firebaseui_version"
     implementation "android.arch.lifecycle:runtime:$arch_version"
@@ -62,6 +63,7 @@ dependencies {
     implementation "com.jakewharton.timber:timber:$timber_version"
     implementation "com.google.dagger:dagger:$dagger_version"
     implementation "com.google.dagger:dagger-android-support:$dagger_version"
+    implementation 'androidx.core:core-ktx:0.2'
 
 
 

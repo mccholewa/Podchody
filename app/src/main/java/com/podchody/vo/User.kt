@@ -8,5 +8,6 @@ package com.podchody.vo
 
 //@IgnoreExtraProperties
 data class User(
-    val Email: String
+    val email: String = "",
+    val status: String = ""
 )

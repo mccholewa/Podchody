@@ -7,6 +7,7 @@ package com.podchody.api
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -15,19 +16,19 @@ import javax.inject.Singleton
 
     @Provides
     @Singleton
-    fun provideFirebaseDatabase(): FirebaseDatabase {
-    var firebaseDatabase = FirebaseDatabase.getInstance()
+    fun provideFirebaseFirestore(): FirebaseFirestore {
+    var firebaseFirestore = FirebaseFirestore.getInstance()
         //firebaseDatabase.setPersistenceEnabled(true)
-        return firebaseDatabase
+        return firebaseFirestore
     }
 
     @Provides
     @Singleton
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
-    @Provides
-    @Singleton
-    fun authFb(firebaseAuth:FirebaseAuth): AuthFb = AuthFbImpl(firebaseAuth)
+//    @Provides
+//    @Singleton
+//    fun provideFirebaseDatabaseRepository(firebaseDatabase: FirebaseDatabase) = (firebaseDatabase)
 
     @Provides
     @Singleton

@@ -11,6 +11,8 @@ class StringLanguageResource(language: String){
     var enterPassword: String = ""
     var youAreSingedIn: String = ""
     var unknownError: String = ""
+    var signInFail: String = ""
+    var noNetwork: String = ""
 
     init {
         if(language == "en") {
@@ -18,12 +20,16 @@ class StringLanguageResource(language: String){
             enterPassword = "Enter password"
             youAreSingedIn = "You are already signed in"
             unknownError = "Unknown error"
+            signInFail = "Login failed"
+            noNetwork = "Connection problem"
         }
         else if(language == "pl"){
             enterEmailAddress = "Wprowadź adres email"
             enterPassword = "Wprowadź hasło"
             youAreSingedIn = "Jesteś już zalogowany"
             unknownError = "Nieznany błąd"
+            signInFail = "Logowanie nie powiodło się"
+            noNetwork = "Porblem z połączeniem"
         }
     }
 }

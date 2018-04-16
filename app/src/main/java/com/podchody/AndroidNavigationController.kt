@@ -26,11 +26,6 @@ class AndroidNavigationController @Inject constructor():NavigationController {
                 .commitAllowingStateLoss()
     }
 
-    override fun navigateToAuth(activity: FragmentActivity){
-        val RC_SIGN_IN:Int = 123
-
-
-    }
 
    override fun navigateToRegister(activity: FragmentActivity){
         val registerFragment = RegisterFragment()
@@ -50,6 +45,6 @@ class AndroidNavigationController @Inject constructor():NavigationController {
 
     override fun showError(activity: FragmentActivity, error: String?) {
         Snackbar.make(activity.findViewById(android.R.id.content), error
-                ?: "Error", Snackbar.LENGTH_LONG).show()
+                ?: "Error", 5).show()
     }
 }
