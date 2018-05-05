@@ -16,14 +16,20 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        resConfigs "en", "pl"
+        resConfigs "auto"
     }
     buildTypes {
         debug {
+            debuggable true
+            //  minifyEnabled true
+            // proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             testCoverageEnabled !project.hasProperty('android.injected.invoked.from.ide')
         }
         release {
-            minifyEnabled false
+            debuggable false
+            //  minifyEnabled true
+            //  shrinkResources true
+            //  proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -38,6 +44,12 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     kapt "android.arch.lifecycle:compiler:$arch_version"
+
+
+    implementation "com.google.android.gms:play-services-auth:$firebase_version"
+    implementation "com.google.android.gms:play-services-identity:$firebase_version"
+    implementation "com.google.android.gms:play-services-location:$firebase_version"
+    implementation "com.google.android.gms:play-services-maps:$firebase_version"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation "com.android.support:appcompat-v7:$support_version"
@@ -54,7 +66,6 @@ dependencies {
     implementation "com.google.firebase:firebase-core:$firebase_version"
     implementation "com.google.firebase:firebase-database:$firebase_version"
     implementation "com.google.firebase:firebase-auth:$firebase_version"
-    implementation "com.google.firebase:firebase-firestore:$firebase_version"
     implementation "com.firebaseui:firebase-ui-database:$firebaseui_version"
     implementation "com.firebaseui:firebase-ui-auth:$firebaseui_version"
     implementation "android.arch.lifecycle:runtime:$arch_version"
@@ -71,3 +82,5 @@ dependencies {
     kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_version"
 }
 apply plugin: 'com.google.gms.google-services'
+
+

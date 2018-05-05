@@ -7,7 +7,7 @@ package com.podchody.vo
 //import com.google.firebase.database.IgnoreExtraProperties
 
 //@IgnoreExtraProperties
-data class User(
+class User(
     val email: String = "",
     val status: String = ""
 )

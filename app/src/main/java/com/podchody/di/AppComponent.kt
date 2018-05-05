@@ -5,7 +5,6 @@ package com.podchody.di
  */
 
 import android.app.Application
-import android.content.Context
 import com.podchody.ViewLibModule
 import dagger.BindsInstance
 import dagger.Component
@@ -14,6 +13,10 @@ import com.podchody.PodchodyApp
 import com.podchody.api.ApiModule
 import com.podchody.ui.lobby.LobbyModule
 import com.podchody.ui.login.LoginModule
+import com.podchody.ui.map.MapModule
+import com.podchody.ui.mapplayer.MapplayerModule
+import com.podchody.ui.message.MessageModule
+import com.podchody.ui.newgame.NewgameModule
 import com.podchody.ui.register.RegisterModule
 import javax.inject.Singleton
 import dagger.android.AndroidInjector
@@ -29,7 +32,11 @@ import dagger.android.support.AndroidSupportInjectionModule
     LobbyModule::class,
     LoginModule::class,
     RegisterModule::class,
-    ApiModule::class
+    ApiModule::class,
+    NewgameModule::class,
+    MessageModule::class,
+    MapModule::class,
+    MapplayerModule::class
 ])
 interface AppComponent : AndroidInjector<PodchodyApp> {
 

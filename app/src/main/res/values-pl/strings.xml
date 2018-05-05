@@ -10,5 +10,23 @@
     <string name="facebook_app_id">[APP_ID]</string>
     <string name="fb_login_protocol_scheme">fb[APP_ID]</string>
     <string name="sing_out">Wyloguj</string>
+    <string name="new_game">Nowa gra</string>
+    <string name="create_game">Stwórz grę</string>
+    <string name="exit">Wyjdzi</string>
+    <string name="player">Player</string>
+    <string name="seeker">Szukajcy</string>
+    <string name="runner">Uciekający</string>
+    <string name="no_player">Oczekiwanie na gracza</string>
+    <string name="start_game">Nowa Gra</string>
+    <string name="need_second_player">Potrzebujesz drugiego gracza</string>
+    <string name="exit_game_dialog">Czy napewno chcesz zakończyć rozgrywkę?</string>
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
+    <string name="leave_mark">Zostaw ślad</string>
+    <string name="message">Wiadomość</string>
+    <string name="message_hint">Dodaj wiadomość</string>
+    <string name="add_mark">Dodaj ślad</string>
+
+
 
 </resources>

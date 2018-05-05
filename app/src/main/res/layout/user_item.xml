@@ -4,9 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
-            name="user"
-            type="com.podchody.vo.User"/>
-        <variable
             name="viewModel"
             type="com.podchody.ui.lobby.LobbyViewModel"/>
     </data>
@@ -18,19 +15,19 @@
     android:layout_margin="10dp">
 
 
-    <android.support.constraint.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
+            android:id="@+id/name_online"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="30sp"
             android:gravity="center"
-            android:text="@{user.email + ' ' + user.status}"
-            tools:text="2352@gmail.com"/>
+            tools:text="Alicja Luter"/>
 
-    </android.support.constraint.ConstraintLayout>
+    </RelativeLayout>
 </android.support.v7.widget.CardView>
 </layout>
     <!--android:text="@{user.email}"-->

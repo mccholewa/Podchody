@@ -6,7 +6,14 @@ package com.podchody.ui.common
 
 import android.databinding.ViewDataBinding
 import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.database.DatabaseError
+import com.podchody.modle.GameFb
+import com.podchody.ui.lobby.LobbyViewHolder
+import timber.log.Timber
 
 class DataBoundListAdapter<T : Any, V : ViewDataBinding>(
         private var factory: (ViewGroup) -> DataBoundViewHolder<T, V>

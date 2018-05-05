@@ -2,7 +2,6 @@ package com.podchody.ui.login
 
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -13,27 +12,18 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.podchody.NavigationController
 import com.podchody.R
+import com.podchody.api.FirebaseDatabaseRepository
 import com.podchody.databinding.LoginFragmentBinding
-import com.podchody.util.KeyboardUtil
-import com.podchody.util.UiActionsLiveData
 import com.podchody.util.ViewModelFactory
 import com.podchody.vo.StringLanguageResource
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.login_fragment.view.*
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
-import java.util.Arrays.asList
-import java.util.Arrays.asList
-import java.util.Arrays.asList
-
-
-
-
-
-
 
 
 class LoginFragment : Fragment() {
@@ -46,9 +36,13 @@ class LoginFragment : Fragment() {
 
     @Inject lateinit var auth: FirebaseAuth
 
-    val LOGIN_PERMISSION:Int = 1000
+    @Inject lateinit var repository: FirebaseDatabaseRepository
 
-   // val uiActions = UiActionsLiveData()
+    @Inject
+    lateinit var db: FirebaseDatabase
+
+    val LOGIN_PERMISSION:Int = 123
+
 
     private val viewModel by lazy {
         viewModelFactory(this, viewModelProvider)
@@ -60,30 +54,28 @@ class LoginFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         binding = LoginFragmentBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
-        createAuthUI()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
+        createAuthUI()
 
       //  binding.viewModel = viewModel
 
         viewModel.liveData.observe(this){
-      //      binding.state = it
+       //     binding.state = it
         }
 
         viewModel.uiActions.observe(this){it(activity!!)}
     }
 
-
     fun createAuthUI(){
+        Timber.d("                                                                                      Auth ui started")
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
@@ -95,24 +87,32 @@ class LoginFragment : Fragment() {
                         .build(), LOGIN_PERMISSION)
     }
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         super.onActivityResult(requestCode, resultCode, data)
-        val language = Locale.getDefault().getDisplayLanguage()
+        val language = Locale.getDefault().displayLanguage
         if (requestCode == LOGIN_PERMISSION) {
             val response = IdpResponse.fromResultIntent(data)
             if (resultCode == Activity.RESULT_OK) {
-                navigationController.navigateToLobby(activity!!)
+                repository.writeUser()
+                val currentUserReference = db.reference.child("users").child(auth.currentUser!!.uid).child("connected")
+                currentUserReference!!.onDisconnect().setValue(false)
+                db.reference.child("games").child("Game Key").child("host").child("uid").setValue(auth.currentUser!!.uid)
+                db.reference.child("games").child("Game Key").child("host").child("role").setValue("runner")
+                db.reference.child("games").child("Game Key").child("player").child("uid").setValue("user3")
+                db.reference.child("games").child("Game Key").child("player").child("role").setValue("seeker")
+                db.reference.child("games").child("Game Key").child("title").setValue("test game")
+                navigationController.navigateToMapplayerFragment(activity!!,"Game Key","Andrzej Gąska","user3")
+                //navigationController.navigateToLobby(activity!!)
             } else {
                 if (response == null) {
-                    navigationController.showError(activity!!, StringLanguageResource(language).signInFail )
+                    navigationController.showError( activity!!, StringLanguageResource(language).signInFail )
                     return
                 }
                 if (response.error!!.errorCode == ErrorCodes.NO_NETWORK) {
                     navigationController.showError(activity!!, StringLanguageResource(language).noNetwork)
                     return
                 }
-               navigationController.showError(activity!!, StringLanguageResource(language).unknownError)
+                navigationController.showError(activity!!, StringLanguageResource(language).unknownError)
             }
         }
     }
