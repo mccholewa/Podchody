@@ -17,6 +17,7 @@ import com.podchody.ui.map.MapModule
 import com.podchody.ui.mapplayer.MapplayerModule
 import com.podchody.ui.message.MessageModule
 import com.podchody.ui.newgame.NewgameModule
+import com.podchody.ui.newgameplayer.NewgameplayerModule
 import com.podchody.ui.register.RegisterModule
 import javax.inject.Singleton
 import dagger.android.AndroidInjector
@@ -34,9 +35,12 @@ import dagger.android.support.AndroidSupportInjectionModule
     RegisterModule::class,
     ApiModule::class,
     NewgameModule::class,
+    NewgameplayerModule::class,
     MessageModule::class,
     MapModule::class,
     MapplayerModule::class
+
+
 ])
 interface AppComponent : AndroidInjector<PodchodyApp> {
 

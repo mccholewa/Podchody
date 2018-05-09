@@ -30,6 +30,7 @@ import com.podchody.R.layout.*
 import com.podchody.modle.PlayerFb
 import com.podchody.vo.StringLanguageResource
 import kotlinx.android.synthetic.main.newgame_dialog.view.*
+import java.io.IOException
 import java.util.*
 import kotlin.math.acos
 
@@ -55,12 +56,13 @@ class LobbyFragment: Fragment() {
     @Inject
     lateinit var auth: FirebaseAuth
 
-
+    private var language = Locale.getDefault().displayLanguage
     private var adapter: FirebaseRecyclerAdapter<GameFb, LobbyViewHolder>? = null
     private var userFbConnectedListener: ChildEventListener? = null
     private var userFbList = mutableListOf<UserFb>()
     private var userFbReference: DatabaseReference? = null
     private var currentUserReference: DatabaseReference? = null
+    private var gameCreated : Boolean = false
 
     private val viewModel by lazy {
         viewModelFactory(this, viewModelProvider)
@@ -135,7 +137,6 @@ class LobbyFragment: Fragment() {
     }
 
     fun btnCreatNewgame(){
-        val language = Locale.getDefault().displayLanguage
         val dialogBuilder = AlertDialog.Builder(activity!!)
         val dialogView = this.layoutInflater.inflate(newgame_dialog, null)
         dialogBuilder.setView(dialogView)
@@ -149,13 +150,17 @@ class LobbyFragment: Fragment() {
             }
             else{
                 Timber.d("                                                          title %s", title)
-                val gameRef = db.reference.child("games").push()
-                val host = PlayerFb(auth.currentUser!!.uid,  "runner")
-                db.reference.child("games").child(gameRef.key).child("host").setValue(host)
-                db.reference.child("games").child(gameRef.key).child("title").setValue(title)
-                db.reference.child("games").child(gameRef.key).child("started").setValue(false)
-                db.reference.child("users").child(auth.currentUser!!.uid).child("game").setValue(gameRef.key)
-                navigationController.navigateToNewgame(activity!!, title,gameRef.key)
+                if (isOnline()) {
+                    val gameRef = db.reference.child("games").push()
+                    val host = PlayerFb(auth.currentUser!!.uid, "runner", auth.currentUser!!.displayName!!)
+                    db.reference.child("games").child(gameRef.key).child("host").setValue(host)
+                    db.reference.child("games").child(gameRef.key).child("title").setValue(title)
+                    db.reference.child("games").child(gameRef.key).child("started").setValue(false)
+                    db.reference.child("games").child(gameRef.key).child("full").setValue(false)
+                    db.reference.child("users").child(auth.currentUser!!.uid).child("game").setValue(gameRef.key)
+                    navigationController.navigateToNewgame(activity!!, title, gameRef.key)
+                    gameCreated = true
+                } else navigationController.showError(activity!!, StringLanguageResource(language).noNetwork)
                 alertDialog.cancel()
             }
         }
@@ -169,7 +174,7 @@ class LobbyFragment: Fragment() {
 
     fun createGameAdapter():FirebaseRecyclerAdapter<GameFb, LobbyViewHolder> {
         Timber.d("                                                              Adapter full")
-        val query = db.reference.child("games").orderByChild("player").equalTo(null)
+        val query = db.reference.child("games").orderByChild("full").equalTo(false)
         val options = FirebaseRecyclerOptions.Builder<GameFb>()
                 .setQuery(query, GameFb::class.java)
                 .build()
@@ -179,7 +184,15 @@ class LobbyFragment: Fragment() {
                 holder.name.text = model.title
                 Timber.d("                                                              User item id: %s", model.title)
                 Timber.d("                                                              User connected: %s", model.started)
-                holder.name.setOnClickListener { navigationController.navigateToNewgame(activity!!, model.title!!,getRef(position).key) }
+                holder.name.setOnClickListener {
+                    if (isOnline()) {
+                        db.reference.child("games").child(getRef(position).key).child("player").child("name").setValue(auth.currentUser!!.displayName)
+                        db.reference.child("games").child(getRef(position).key).child("player").child("uid").setValue(auth.currentUser!!.uid)
+                        db.reference.child("games").child(getRef(position).key).child("player").child("uid").setValue(auth.currentUser!!.uid)
+                        navigationController.navigateToNewgameplayer(activity!!, model.title!!, getRef(position).key, model.host!!.name!!)
+                    } else
+                        navigationController.showError(activity!!, StringLanguageResource(language).noNetwork)
+                }
             }
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LobbyViewHolder {
@@ -197,6 +210,7 @@ class LobbyFragment: Fragment() {
         adapter.notifyDataSetChanged()
         return adapter
     }
+
 
     fun createUserOnlineAdapter():FirebaseRecyclerAdapter<UserFb, OnlineUserViewHolder>{
         Timber.d("                                                              Adapter full")
@@ -225,6 +239,20 @@ class LobbyFragment: Fragment() {
         }
         adapter.notifyDataSetChanged()
         return adapter
+    }
+
+    fun isOnline(): Boolean {
+        val runtime = Runtime.getRuntime()
+        try {
+            val ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8")
+            val exitValue = ipProcess.waitFor()
+            return exitValue == 0
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+        return false
     }
 
 

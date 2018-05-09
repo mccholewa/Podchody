@@ -15,6 +15,7 @@ interface NavigationController {
     fun navigateToNewgame(activity: FragmentActivity,title: String,key: String)
     fun navigateToMessageFragment(activity: FragmentActivity)
     fun showError(context: Context, error: String?)
-    fun navigateToMapplayerFragment(activity: FragmentActivity,key:String,playerName:String, playerUid: String)
-    fun navigateToMapFragment(activity: FragmentActivity,key:String,playerName:String, playerUid: String)
+    fun navigateToMapplayerFragment(activity: FragmentActivity,key:String)
+    fun navigateToMapFragment(activity: FragmentActivity,key:String)
+    fun navigateToNewgameplayer(activity:FragmentActivity,title:String,key:String,hostName:String)
 }

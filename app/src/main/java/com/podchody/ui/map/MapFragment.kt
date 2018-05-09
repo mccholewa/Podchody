@@ -39,6 +39,7 @@ import com.podchody.util.OnBackPressedListener
 import com.podchody.vo.StringLanguageResource
 import kotlinx.android.synthetic.main.addmarker_dialog.view.*
 import kotlinx.android.synthetic.main.exitgame_dialog.view.*
+import java.io.IOException
 import java.util.*
 
 
@@ -63,9 +64,8 @@ class MapFragment: Fragment(), OnBackPressedListener,  LocationListener, Activit
     lateinit var auth: FirebaseAuth
 
     lateinit var googleMap: GoogleMap
-    lateinit var fusedLocationClient: FusedLocationProviderClient
+    lateinit var fusedLocationClient : FusedLocationProviderClient
 
-    private var currentLocationMarker: Marker? = null
     private var mapFragment: SupportMapFragment? = null
     private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 10
     private val language = Locale.getDefault().displayLanguage
@@ -88,10 +88,8 @@ class MapFragment: Fragment(), OnBackPressedListener,  LocationListener, Activit
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        checkLocationPremition()
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity!!)
-
+        checkLocationPremition()
         if (mapFragment == null) {
             mapFragment = SupportMapFragment.newInstance()
             mapFragment!!.getMapAsync {
@@ -104,20 +102,11 @@ class MapFragment: Fragment(), OnBackPressedListener,  LocationListener, Activit
                     googleMap.isMyLocationEnabled = true
                     fusedLocationClient.lastLocation.addOnSuccessListener { lastLocalization: Location? ->
                         if (lastLocalization != null) {
-                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lastLocalization.latitude, lastLocalization.longitude),50F))
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lastLocalization.latitude, lastLocalization.longitude),18F))
                         }
                     }
-                    binding.btnMarker.setOnClickListener {
-                        fusedLocationClient.lastLocation.addOnSuccessListener { lastLocalization: Location? ->
-                            if(lastLocalization != null){
-                                addMarkerDialog(LatLng(lastLocalization.latitude,lastLocalization.longitude))
-                            }
-                        }
-                                .addOnFailureListener { navigationController.showError(activity!!, StringLanguageResource(language).connectionErorr) }
-                    }
-                } else {
-                    checkLocationPremition()
-                }
+
+                }else checkLocationPremition()
             }
         }
 
@@ -133,6 +122,16 @@ class MapFragment: Fragment(), OnBackPressedListener,  LocationListener, Activit
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+//        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity!!)
+        if (checkSelfPermission(activity!!, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            binding.btnMarker.setOnClickListener {
+                fusedLocationClient.lastLocation.addOnSuccessListener { lastLocalization: Location? ->
+                    if (lastLocalization != null) {
+                        addMarkerDialog(LatLng(lastLocalization.latitude, lastLocalization.longitude))
+                    }
+                }
+            }
+        }else checkLocationPremition()
 
         //  binding.viewModel = viewModel
         viewModel.liveData.observe(this) {
@@ -147,23 +146,21 @@ class MapFragment: Fragment(), OnBackPressedListener,  LocationListener, Activit
         dialogBuilder.setView(dialogView)
         val alertDialog = dialogBuilder.create()
         dialogView.btn_add_marker.setOnClickListener {
-            val message = dialogView.et_message.text.toString()
-            val markFb = MarkerFb(message, false, latLng.latitude, latLng.longitude)
-            val key = db.reference.child("games").child(arguments!!.getString("key")).child("marks").push().key
-            db.reference.child("games").child(arguments!!.getString("key")).child("marks").child(key).setValue(markFb)
-            db.reference.child("games").child(arguments!!.getString("key")).child("marks").child(key).child("date").setValue(ServerValue.TIMESTAMP)
-                    .addOnSuccessListener {
-                        val markerOptions = MarkerOptions()
-                        markerOptions.position(latLng)
-                        markerOptions.title(message)
-                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-                        googleMap.addMarker(markerOptions)
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
-                        alertDialog.cancel()
-                    }
-                    .addOnFailureListener {
-                        navigationController.showError(activity!!, StringLanguageResource(language).connectionErorr)
-                    }
+            if (isOnline()) {
+                val message = dialogView.et_message.text.toString()
+                val markFb = MarkerFb(message, false, latLng.latitude, latLng.longitude)
+                val key = db.reference.child("games").child(arguments!!.getString("key")).child("marks").push().key
+                db.reference.child("games").child(arguments!!.getString("key")).child("marks").child(key).setValue(markFb)
+                db.reference.child("games").child(arguments!!.getString("key")).child("marks").child(key).child("date").setValue(ServerValue.TIMESTAMP)
+                val markerOptions = MarkerOptions()
+                markerOptions.position(latLng)
+                markerOptions.title(message)
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                googleMap.addMarker(markerOptions)
+                googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
+                alertDialog.cancel()
+
+            } else navigationController.showError(activity!!, StringLanguageResource(language).noNetwork)
         }
         alertDialog.show()
         dialogView.btn_exit_addmarker.setOnClickListener {
@@ -182,7 +179,6 @@ class MapFragment: Fragment(), OnBackPressedListener,  LocationListener, Activit
             alertDialog.cancel()
         }
         alertDialog.show()
-
         dialogView.btn_no.setOnClickListener {
             alertDialog.cancel()
         }
@@ -194,6 +190,20 @@ class MapFragment: Fragment(), OnBackPressedListener,  LocationListener, Activit
             ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
         }
+    }
+
+    fun isOnline(): Boolean {
+        val runtime = Runtime.getRuntime()
+        try {
+            val ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8")
+            val exitValue = ipProcess.waitFor()
+            return exitValue == 0
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+        return false
     }
 
 }

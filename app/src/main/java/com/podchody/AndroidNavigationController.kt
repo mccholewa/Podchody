@@ -22,14 +22,14 @@ import android.widget.Toast
 import com.podchody.ui.map.MapFragment
 import com.podchody.ui.mapplayer.MapplayerFragment
 import com.podchody.ui.newgame.NewgameFragment
+import com.podchody.ui.newgameplayer.NewgameplayerFragment
 
 
 @Singleton
 class AndroidNavigationController @Inject constructor():NavigationController {
 
-    override fun navigateToMapFragment(activity: FragmentActivity,key:String,playerName:String, playerUid: String) {
+    override fun navigateToMapFragment(activity: FragmentActivity, key:String) {
         var args: Bundle = Bundle()
-        args.putString("playerName",playerName)
         args.putString("key", key)
         val mapFragment = MapFragment()
         mapFragment.arguments = args
@@ -39,9 +39,8 @@ class AndroidNavigationController @Inject constructor():NavigationController {
                 .commitAllowingStateLoss()
     }
 
-    override fun navigateToMapplayerFragment(activity: FragmentActivity,key:String,playerName:String, playerUid: String) {
+    override fun navigateToMapplayerFragment(activity: FragmentActivity,key:String) {
         var args: Bundle = Bundle()
-        args.putString("hostName",playerName)
         args.putString("key", key)
         val mapplayerFragment = MapplayerFragment()
         mapplayerFragment.arguments = args
@@ -53,6 +52,19 @@ class AndroidNavigationController @Inject constructor():NavigationController {
 
     override fun navigateToMessageFragment(activity: FragmentActivity) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun navigateToNewgameplayer(activity:FragmentActivity,title:String,key:String,hostName: String) {
+        var args: Bundle = Bundle()
+        args.putString("title", title)
+        args.putString("key", key)
+        args.putString("hostName",hostName)
+        val newgameplayerFragment = NewgameplayerFragment()
+        newgameplayerFragment.arguments = args
+        activity.supportFragmentManager.beginTransaction()
+                .replace(R.id.container, newgameplayerFragment)
+//                .addToBackStack("newgame")
+                .commitAllowingStateLoss()
     }
 
     override fun navigateToNewgame(activity:FragmentActivity,title:String,key:String) {

@@ -2,28 +2,18 @@ package com.podchody.ui.mapplayer
 
 
 import android.Manifest
-import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
-import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.support.v4.content.PermissionChecker
 import android.support.v4.content.PermissionChecker.checkSelfPermission
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.common.GooglePlayServicesUtil.isGooglePlayServicesAvailable
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.common.api.PendingResult
-import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.firebase.auth.FirebaseAuth
@@ -35,25 +25,19 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.tasks.Task
 import com.google.firebase.database.*
 import com.podchody.R
 
 
 import com.podchody.databinding.MapplayerFragmentBinding
 import com.podchody.modle.MarkerFb
-import com.podchody.modle.PlayerFb
 import com.podchody.util.OnBackPressedListener
-import com.podchody.util.OnMapAndViewReadyListener
-import com.podchody.vo.StringLanguageResource
 import kotlinx.android.synthetic.main.exitgame_dialog.view.*
-import kotlinx.android.synthetic.main.newgame_dialog.view.*
 import timber.log.Timber
 
 
@@ -81,7 +65,6 @@ class MapplayerFragment: Fragment(), OnBackPressedListener, LocationListener, Ac
 
     lateinit var language: String
 
-    lateinit var locationRequest: LocationRequest
     lateinit var fusedLocationClient: FusedLocationProviderClient
     lateinit var lastLocalization: Location
     lateinit var markersChildEventListener: ChildEventListener
@@ -91,6 +74,10 @@ class MapplayerFragment: Fragment(), OnBackPressedListener, LocationListener, Ac
     private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 10
     private var currentLastMarker: Marker? = null
     private var notFoundMarkerList = mutableListOf<MarkerFb>()
+    private var locationRequest = LocationRequest().apply {  interval = 3000
+        fastestInterval = 3000
+        priority = com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY}
+
 
 
     private val viewModel by lazy {
@@ -103,9 +90,8 @@ class MapplayerFragment: Fragment(), OnBackPressedListener, LocationListener, Ac
                               savedInstanceState: Bundle?): View? {
         checkLocationPremition()
         createMarkersChildEventListener()
-        markersReference = db.reference.child("games").child(arguments!!.getString("key")).child("marks")
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity!!)
-
+        createLocalizationRequest()
         if (mapFragment == null) {
             mapFragment = SupportMapFragment.newInstance()
             mapFragment!!.getMapAsync {
@@ -114,8 +100,6 @@ class MapplayerFragment: Fragment(), OnBackPressedListener, LocationListener, Ac
                     googleMap.uiSettings.isCompassEnabled = true
                     googleMap.uiSettings.isMyLocationButtonEnabled = true
                 }
-                createLocalizationRequest()
-
                 if (checkSelfPermission(activity!!, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
                     googleMap.isMyLocationEnabled = true
@@ -138,7 +122,6 @@ class MapplayerFragment: Fragment(), OnBackPressedListener, LocationListener, Ac
             currentLastMarker!!.remove()
         val markerOptions = MarkerOptions()
         markerOptions.position(LatLng(lastMarker.lat!!, lastMarker.lng!!))
-                .title(lastMarker.message)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_not_found))
         currentLastMarker = googleMap.addMarker(markerOptions)
     }
@@ -191,8 +174,6 @@ class MapplayerFragment: Fragment(), OnBackPressedListener, LocationListener, Ac
                     if (marker.found!! == false) {
                         notFoundMarkerList.add(marker)
                         notFoundMarkerList.sortBy { markerFb: MarkerFb -> markerFb.date  }
-                        if(currentLastMarker != null)
-                            currentLastMarker!!.remove()
                         val lastMarker = notFoundMarkerList.first()
                         addNotFoundMarker(lastMarker)
                     }
@@ -202,21 +183,11 @@ class MapplayerFragment: Fragment(), OnBackPressedListener, LocationListener, Ac
                 }
             }
 
-            override fun onChildChanged(dataSnapshot: DataSnapshot?, childName: String?) {
-                if (dataSnapshot != null) {
-                }
-            }
-
-            override fun onChildMoved(p0: DataSnapshot?, p1: String?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-
-            override fun onChildRemoved(p0: DataSnapshot?) {
-            }
-
+            override fun onChildChanged(dataSnapshot: DataSnapshot?, childName: String?) {}
+            override fun onChildMoved(p0: DataSnapshot?, p1: String?) {}
+            override fun onChildRemoved(p0: DataSnapshot?) {}
             override fun onCancelled(databaseError: DatabaseError?) {
-                Timber.d("postMessages:onCancelled:    %s", databaseError!!.toException().toString())
-            }
+                Timber.d("postMessages:onCancelled:    %s", databaseError!!.toException().toString()) }
         }
     }
 
@@ -245,6 +216,7 @@ class MapplayerFragment: Fragment(), OnBackPressedListener, LocationListener, Ac
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        markersReference = db.reference.child("games").child(arguments!!.getString("key")).child("marks")
         markersReference.addChildEventListener(markersChildEventListener)
         //  binding.viewModel = viewModel
         viewModel.liveData.observe(this) {
@@ -264,7 +236,6 @@ class MapplayerFragment: Fragment(), OnBackPressedListener, LocationListener, Ac
             alertDialog.cancel()
         }
         alertDialog.show()
-
         dialogView.btn_no.setOnClickListener {
             alertDialog.cancel()
         }

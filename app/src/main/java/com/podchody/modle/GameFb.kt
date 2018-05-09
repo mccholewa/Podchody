@@ -12,7 +12,6 @@ class GameFb{
     var started:Boolean? = null
     var host: PlayerFb? = null
     var player: PlayerFb? = null
-    var pointsFb: String? = null
 
     constructor(){}//needed for firebase to work
 
@@ -21,7 +20,6 @@ class GameFb{
         this.host = host
         this.title = title
         this.player = player
-        this.pointsFb = pointsFb
     }
 
 //    constructor(name: String,ended: Boolean, hostid: String, playerid: String, pointFb: MarkerFb){

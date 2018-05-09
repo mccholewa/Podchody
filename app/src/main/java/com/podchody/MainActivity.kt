@@ -33,6 +33,7 @@ import com.google.firebase.database.*
 import com.podchody.ui.map.MapFragment
 import com.podchody.ui.mapplayer.MapplayerFragment
 import com.podchody.ui.newgame.NewgameFragment
+import com.podchody.ui.newgameplayer.NewgameplayerFragment
 import com.podchody.util.OnBackPressedListener
 
 
@@ -67,21 +68,25 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, ActivityCo
     override fun onBackPressed() {
         val fragment = this.supportFragmentManager.findFragmentById(R.id.container)
 
-        if(fragment is NewgameFragment){
-            if(!fragment.onBackPressed())
-                super.onBackPressed()
-            else return
-        }
-
-        if(fragment is MapFragment)
-            if(!fragment.onBackPressed())
+        if (fragment is NewgameFragment)
+            if (!fragment.onBackPressed())
                 super.onBackPressed()
             else return
 
-            super.onBackPressed()
 
-        if(fragment is MapplayerFragment)
-            if(!fragment.onBackPressed())
+        if (fragment is NewgameplayerFragment)
+            if (!fragment.onBackPressed())
+                super.onBackPressed()
+            else return
+
+
+        if (fragment is MapFragment)
+            if (!fragment.onBackPressed())
+                super.onBackPressed()
+            else return
+
+        if (fragment is MapplayerFragment)
+            if (!fragment.onBackPressed())
                 super.onBackPressed()
             else return
 

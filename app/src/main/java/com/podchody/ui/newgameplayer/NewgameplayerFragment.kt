@@ -4,24 +4,23 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
 import android.view.ViewGroup
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.podchody.NavigationController
 import com.podchody.databinding.NewgameFragmentBinding
 import com.podchody.ui.lobby.LobbyViewModel
+import com.podchody.util.OnBackPressedListener
 import com.podchody.util.ViewModelFactory
-import com.podchody.vo.StringLanguageResource
 import dagger.android.support.AndroidSupportInjection
-import timber.log.Timber
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
 
 /**
  * Created by Misiu on 19.04.2018.
  */
-class NewgameplayerFragment: Fragment() {
+class NewgameplayerFragment: Fragment(), OnBackPressedListener {
 
 
     @Inject
@@ -39,20 +38,16 @@ class NewgameplayerFragment: Fragment() {
     @Inject
     lateinit var auth: FirebaseAuth
 
-    lateinit var playerEventListener: ValueEventListener
-    lateinit var hostRef: DatabaseReference
-
-    private var playerName:String? = ""
-
-    lateinit var playerUid: String
-    lateinit var playerNameRef:DatabaseReference
+    lateinit var startEventListener: ValueEventListener
+    lateinit var startRef: DatabaseReference
+    lateinit var roleRef: DatabaseReference
+    lateinit var roleEventListener: ValueEventListener
 
     private val viewModel by lazy {
         viewModelFactory(this, viewModelProvider)
     }
 
     lateinit var binding: NewgameFragmentBinding
-
     lateinit var time: String
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -69,28 +64,18 @@ class NewgameplayerFragment: Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        hostRef = db.reference.child("games").child(arguments!!.getString("key")).child("host").child("uid")
-        playerEventListener = createPlayerEventListener()
-        val gameRef = db.reference.child("games").child(arguments!!.getString("key"))
-        gameRef.onDisconnect().removeValue()
+        startRef = db.reference.child("games").child(arguments!!.getString("key")).child("started")
+        roleRef = db.reference.child("games").child(arguments!!.getString("key")).child("player").child("role")
+        startEventListener = createStartEventListener()
+        roleEventListener = createRoleEventListener()
+        binding.tvHost.text = arguments!!.getString("hostName")
         binding.rbHostSeeker.isClickable = false
         binding.rbPlayerRunner.isClickable = false
         binding.rbPlayerSeeker.isClickable = false
-        binding.rbHostSeeker.isClickable = false
-
-
-        Timber.d("                                                                                      title %s",arguments!!.getString("title"))
+        binding.rbHostRunner.isClickable = false
+        binding.start.visibility = INVISIBLE
         binding.tvGameTitleFragment.text = arguments!!.getString("title")
-        binding.tvHost.text = auth.currentUser!!.displayName
-        binding.start.setOnClickListener{
-            //navigationController.navigateToMapFragment(activity!!)
-
-        }
-
-
-
-
-
+        binding.tvPlayer.text = auth.currentUser!!.displayName
 
         //  binding.viewModel = viewModel
 //        viewModel.liveData.observe(this) {
@@ -100,50 +85,74 @@ class NewgameplayerFragment: Fragment() {
 
     }
 
-        fun createPlayerEventListener(): ValueEventListener{
-            val language = Locale.getDefault().displayLanguage
-            val listener = object : ValueEventListener{
+    fun createRoleEventListener(): ValueEventListener {
+        val listener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot?) {
+                if (dataSnapshot != null)
+                    if (dataSnapshot.value == "seeker") {
+                        binding.rbHostSeeker.isChecked = false
+                        binding.rbHostRunner.isChecked = true
+                        binding.rbPlayerRunner.isChecked = false
+                        binding.rbPlayerSeeker.isChecked = true
+                    } else {
+                        binding.rbHostSeeker.isChecked = true
+                        binding.rbHostRunner.isChecked = false
+                        binding.rbPlayerRunner.isChecked = true
+                        binding.rbPlayerSeeker.isChecked = false
+                    }
+            }
 
-                override fun onDataChange(dataSnapshot: DataSnapshot?) {
-                        playerNameRef = db.reference.child("users").child(dataSnapshot!!.value.toString()).child("name")
-                        Timber.d("                                                                                               player uid %s",dataSnapshot.child("uid").value)
-                        playerNameRef.addListenerForSingleValueEvent( object : ValueEventListener{
+            override fun onCancelled(e: DatabaseError?) {
+            }
+        }
+        return listener
+    }
 
-                            override fun onDataChange(dataSnapshot: DataSnapshot?) {
-                                //val player: String?= dataSnapshot!!.child("name").value.toString()
-                                if (dataSnapshot!!.exists())
-                                    binding.tvPlayer.text = dataSnapshot.value.toString()
-                                else {
 
-                                    Timber.d("                                                                                          player name  %s", dataSnapshot.child("name").value.toString())
-                                }
-                            }
-                            override fun onCancelled(e: DatabaseError?) {
-                                if (e != null)
-                                    navigationController.showError(activity!!, e.toException().toString())
-                            }
-                        })
-                }
-                override fun onCancelled(e: DatabaseError?) {
-                    navigationController.showError(activity!!, e!!.toException().toString())
+    fun createStartEventListener(): ValueEventListener {
+        val listener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot?) {
+                if (dataSnapshot != null) {
+                    if (dataSnapshot.value == true) {
+                        if (binding.rbPlayerRunner.isChecked == true)
+                            navigationController.navigateToMapFragment(activity!!, arguments!!.getString("key"))
+                        if (binding.rbPlayerRunner.isChecked == false)
+                            navigationController.navigateToMapplayerFragment(activity!!, arguments!!.getString("key"))
+                    }
+                } else {
+                    db.reference.child("users").child(auth.currentUser!!.uid).child("game").removeValue()
+                    navigationController.navigateToLobby(activity!!)
                 }
             }
-            return listener
+
+            override fun onCancelled(e: DatabaseError?) {
+            }
         }
+        return listener
+    }
+
+    override fun onBackPressed(): Boolean {
+        db.reference.child("users").child(auth.currentUser!!.uid).child("game").removeValue()
+        db.reference.child("games").child(arguments!!.getString("key")).child("player").child("name").removeValue()
+        db.reference.child("games").child(arguments!!.getString("key")).child("player").child("uid").removeValue()
+        navigationController.navigateToLobby(activity!!)
+        return true
+    }
 
     override fun onStart() {
         super.onStart()
-        hostRef.addValueEventListener(playerEventListener)
+        startRef.addValueEventListener(startEventListener)
+        roleRef.addValueEventListener(roleEventListener)
     }
 
     override fun onStop() {
         super.onStop()
-        hostRef.removeEventListener(playerEventListener)
+        startRef.removeEventListener(startEventListener)
+        roleRef.removeEventListener(roleEventListener)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        db.reference.child("games").child(arguments!!.getString("key")).removeValue()
     }
 
 }

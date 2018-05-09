@@ -18,6 +18,7 @@ import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
 import com.podchody.util.OnBackPressedListener
+import java.io.IOException
 
 
 /**
@@ -44,7 +45,6 @@ class NewgameFragment: Fragment(),OnBackPressedListener {
     lateinit var playerRef: DatabaseReference
 
     private var playerName: String? = null
-    private var playerUid: String? = null
     private val language = Locale.getDefault().displayLanguage
     lateinit var playerNameRef: DatabaseReference
     lateinit var gameRef: DatabaseReference
@@ -79,7 +79,7 @@ class NewgameFragment: Fragment(),OnBackPressedListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        playerRef = db.reference.child("games").child(arguments!!.getString("key")).child("player").child("uid")
+        playerRef = db.reference.child("games").child(arguments!!.getString("key")).child("player").child("name")
         gameRef = db.reference.child("games").child(arguments!!.getString("key"))
         playerEventListener = createPlayerEventListener()
         binding.rbHostRunner.isChecked = true
@@ -91,12 +91,15 @@ class NewgameFragment: Fragment(),OnBackPressedListener {
         binding.tvGameTitleFragment.text = arguments!!.getString("title")
         binding.tvHost.text = auth.currentUser!!.displayName
         binding.start.setOnClickListener {
-            if (playerName != null || playerUid != null) {
-                db.reference.child("games").child(arguments!!.getString("key")).child("started").setValue(true)
-                navigationController.navigateToMapFragment(activity!!, arguments!!.getString("key"), playerName!!, playerUid!!)
-            }
-            else
-                navigationController.showError(activity!!, StringLanguageResource(language).needSecondPlayer)
+            if(isOnline()){
+                if (this.playerName != null) {
+                    db.reference.child("games").child(arguments!!.getString("key")).child("started").setValue(true)
+                    if (binding.rbHostRunner.isChecked == true)
+                        navigationController.navigateToMapFragment(activity!!, arguments!!.getString("key"))
+                    else navigationController.navigateToMapplayerFragment(activity!!, arguments!!.getString("key"))
+                } else
+                    navigationController.showError(activity!!, StringLanguageResource(language).needSecondPlayer)
+            } else  navigationController.showError(activity!!, StringLanguageResource(language).noNetwork)
         }
         setRadioButtonsListener()
 
@@ -112,38 +115,19 @@ class NewgameFragment: Fragment(),OnBackPressedListener {
     fun createPlayerEventListener(): ValueEventListener {
 
         val listener = object : ValueEventListener {
-
             override fun onDataChange(dataSnapshot: DataSnapshot?) {
-                if(dataSnapshot!!.exists())
-                    playerUid = dataSnapshot.value.toString()
-                else
-                    playerUid = null
-
-                playerNameRef = db.reference.child("users").child(dataSnapshot!!.value.toString()).child("name")
-                playerNameRef.addListenerForSingleValueEvent(object : ValueEventListener {
-
-                    override fun onDataChange(dataSnapshot: DataSnapshot?) {
-                        //val player: String?= dataSnapshot!!.child("name").value.toString()
-                        if (dataSnapshot!!.exists()) {
-                            playerName = dataSnapshot.value.toString()
-                            binding.tvPlayer.text = playerName
-                        } else {
-                            playerName = null
-                            binding.tvPlayer.text = StringLanguageResource(language).waitingForPlayer
-                            Timber.d("                                                                                          player name  %s", dataSnapshot.child("name").value.toString())
-                        }
-                    }
-
-                    override fun onCancelled(e: DatabaseError?) {
-                        if (e != null)
-                            navigationController.showError(activity!!, e.toException().toString())
-                    }
-                })
+                if (dataSnapshot!!.exists()) {
+                    db.reference.child("games").child(arguments!!.getString("key")).child("full").setValue(true)
+                    playerName = dataSnapshot.value.toString()
+                    binding.tvPlayer.text = playerName
+                } else {
+                    playerName = null
+                    binding.tvPlayer.text = StringLanguageResource(language).waitingForPlayer
+                    db.reference.child("games").child(arguments!!.getString("key")).child("full").setValue(false)
+                }
             }
 
-            override fun onCancelled(e: DatabaseError?) {
-                navigationController.showError(activity!!, e!!.toException().toString())
-            }
+            override fun onCancelled(e: DatabaseError?) {}
         }
         return listener
     }
@@ -198,6 +182,20 @@ class NewgameFragment: Fragment(),OnBackPressedListener {
     override fun onDestroy() {
         super.onDestroy()
         //db.reference.child("games").child(arguments!!.getString("key")).removeValue()
+    }
+
+    fun isOnline(): Boolean {
+        val runtime = Runtime.getRuntime()
+        try {
+            val ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8")
+            val exitValue = ipProcess.waitFor()
+            return exitValue == 0
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+        return false
     }
 
 }
