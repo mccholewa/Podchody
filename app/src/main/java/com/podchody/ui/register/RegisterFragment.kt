@@ -47,9 +47,9 @@ class RegisterFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding.root.register.setOnClickListener{ viewModel.registerUser() }
+
         viewModel.liveData.observe(this){
             binding.state = it
-
         }
 
         viewModel.uiActions.observe(this){it(activity!!)}

@@ -57,13 +57,6 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, ActivityCo
 
     val LOGIN_PERMISSION:Int = 123
     private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 10
-    private val PLAY_SERVICES_RESOLUTION_REQUEST = 30
-    private val REQUEST_CHECK_SETTINGS = 20
-    private val REQUEST_LOCATION = 199
-
-
-    lateinit var stringLanguageResource: StringLanguageResource
-
 
     override fun onBackPressed() {
         val fragment = this.supportFragmentManager.findFragmentById(R.id.container)
@@ -73,12 +66,10 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, ActivityCo
                 super.onBackPressed()
             else return
 
-
         if (fragment is NewgameplayerFragment)
             if (!fragment.onBackPressed())
                 super.onBackPressed()
             else return
-
 
         if (fragment is MapFragment)
             if (!fragment.onBackPressed())
@@ -110,26 +101,6 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, ActivityCo
 
     }
 
-
-//    override fun onBackPressed() {
-//        val drawer: DrawerLayout = findViewById(R.id.container)
-//        if (drawer.isDrawerOpen(GravityCompat.START)) {
-//            drawer.closeDrawer(GravityCompat.START)
-//        } else {
-//            val fragments = supportFragmentManager.backStackEntryCount
-//            if (fragments == 1) {
-//                finish()
-//            } else {
-//                if (fragmentManager.backStackEntryCount > 1) {
-//                    fragmentManager.popBackStack()
-//                } else {
-//                    super.onBackPressed()
-//                }
-//            }
-//        }
-//    }
-
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.actionbar_menu, menu)
@@ -155,15 +126,12 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, ActivityCo
 
 
     fun clearStack() {
-        //Here we are clearing back stack fragment entries
         val backStackEntry = supportFragmentManager.backStackEntryCount
         if (backStackEntry > 0) {
             for (i in 0 until backStackEntry) {
                 supportFragmentManager.popBackStackImmediate()
             }
         }
-
-        //Here we are removing all the fragment that are shown here
         if (supportFragmentManager.fragments != null && supportFragmentManager.fragments.size > 0) {
             for (i in 0 until supportFragmentManager.fragments.size) {
                 val mFragment = supportFragmentManager.fragments[i]
@@ -193,20 +161,11 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, ActivityCo
             PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     navigationController.showError(this,"Location Request granted")
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
                 } else {
                     navigationController.showError(this,"Location Request failed")
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                     checkLocationPremition()
                 }
                 return
-            }
-        // Add other 'when' lines to check for other
-        // permissions this app might request.
-            else -> {
-                // Ignore all other requests.
             }
         }
     }
@@ -218,31 +177,6 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, ActivityCo
         }
     }
 
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        val language = Locale.getDefault().displayLanguage
-//        if (requestCode == LOGIN_PERMISSION) {
-//            val response = IdpResponse.fromResultIntent(data)
-//            if (resultCode == Activity.RESULT_OK) {
-//                repository.writeUser()
-//                val currentUserReference = db.reference.child("users").child(auth.currentUser!!.uid).child("connected")
-//                currentUserReference!!.onDisconnect().setValue(false)
-//                clearStack()
-//                navigationController.navigateToLobby(this)
-//            } else {
-//                if (response == null) {
-//                    navigationController.showError( this.findViewById(R.id.container), StringLanguageResource(language).signInFail )
-//                    return
-//                }
-//                if (response.error!!.errorCode == ErrorCodes.NO_NETWORK) {
-//                    navigationController.showError(this.findViewById(R.id.container), StringLanguageResource(language).noNetwork)
-//                    return
-//                }
-//                navigationController.showError(this.findViewById(R.id.container), StringLanguageResource(language).unknownError)
-//            }
-//        }
-//    }
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentDispatchingAndroidInjector
 

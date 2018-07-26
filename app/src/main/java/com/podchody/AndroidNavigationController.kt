@@ -104,6 +104,5 @@ class AndroidNavigationController @Inject constructor():NavigationController {
 
     override fun showError(activity: Context, error: String?) {
         Toast.makeText(activity, error ?:"Error",Toast.LENGTH_LONG).show()
-       //val snack = Snackbar.make(view, error ?: "Error", LENGTH_SHORT).show()
     }
 }

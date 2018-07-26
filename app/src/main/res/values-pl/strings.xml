@@ -26,6 +26,8 @@
     <string name="message">Wiadomość</string>
     <string name="message_hint">Dodaj wiadomość</string>
     <string name="add_mark">Dodaj ślad</string>
+    <string name="et_game_title">Wprowadź tytul gry</string>
+    <string name="game_title">Tytuł gry</string>
 
 
 

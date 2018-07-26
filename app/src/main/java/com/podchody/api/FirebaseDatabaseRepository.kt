@@ -18,16 +18,10 @@ class FirebaseDatabaseRepository(private val db: FirebaseDatabase,private val au
 
     fun writeUser(){
         if(auth.currentUser != null) {
-//            val user = UserFb(auth.currentUser!!.email!!, auth.currentUser!!.displayName!!, true)
             db.reference.child("users").child(auth.currentUser!!.uid).child("connected").setValue(true)
             db.reference.child("users").child(auth.currentUser!!.uid).child("email").setValue(auth.currentUser!!.email!!)
             db.reference.child("users").child(auth.currentUser!!.uid).child("name").setValue(auth.currentUser!!.displayName!!)
 
-//            db.reference.child("users").child(auth.currentUser!!.uid).setValue(user).addOnSuccessListener {
-//                Timber.d("User added successfully")
-//            }.addOnFailureListener {
-//                Timber.d("User wasn't added")
-//            }
         }
     }
 

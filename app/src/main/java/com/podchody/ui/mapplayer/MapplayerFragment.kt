@@ -63,8 +63,6 @@ class MapplayerFragment: Fragment(), OnBackPressedListener, LocationListener, Ac
 
     lateinit var googleMap: GoogleMap
 
-    lateinit var language: String
-
     lateinit var fusedLocationClient: FusedLocationProviderClient
     lateinit var lastLocalization: Location
     lateinit var markersChildEventListener: ChildEventListener
@@ -74,7 +72,8 @@ class MapplayerFragment: Fragment(), OnBackPressedListener, LocationListener, Ac
     private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 10
     private var currentLastMarker: Marker? = null
     private var notFoundMarkerList = mutableListOf<MarkerFb>()
-    private var locationRequest = LocationRequest().apply {  interval = 3000
+
+    private var locationRequest = LocationRequest().apply {  interval= 3000
         fastestInterval = 3000
         priority = com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY}
 

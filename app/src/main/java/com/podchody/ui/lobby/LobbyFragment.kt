@@ -58,10 +58,7 @@ class LobbyFragment: Fragment() {
 
     private var language = Locale.getDefault().displayLanguage
     private var adapter: FirebaseRecyclerAdapter<GameFb, LobbyViewHolder>? = null
-    private var userFbConnectedListener: ChildEventListener? = null
     private var userFbList = mutableListOf<UserFb>()
-    private var userFbReference: DatabaseReference? = null
-    private var currentUserReference: DatabaseReference? = null
     private var gameCreated : Boolean = false
 
     private val viewModel by lazy {
@@ -96,18 +93,11 @@ class LobbyFragment: Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-//        currentUserReference = db.reference.child("users").child(auth.currentUser!!.uid).child("connected")
-//        currentUserReference!!.onDisconnect().setValue(false)
-
-        //rv_onlineuser_list.itemAnimator = DefaultItemAnimator()
         userFbList = mutableListOf()
         adapter = createGameAdapter()
         binding.rvList.layoutManager = LinearLayoutManager(activity)
         binding.rvList.adapter = adapter
         binding.btnAdd.setOnClickListener{ btnCreatNewgame() }
-
-//        val onlineUsers = db.reference.child("users").orderByChild("connected").equalTo(true)
-//        onlineUsers.addChildEventListener(userFbConnectedListener)
 
 
         viewModel.liveData.observe(this){

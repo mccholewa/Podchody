@@ -28,7 +28,6 @@ class PodchodyApp : DaggerApplication() {
     }
     override fun onCreate() {
         super.onCreate()
-        FirebaseAuth.getInstance().signOut()
         if (BuildConfig.DEBUG) {
             //timber plant
             Timber.plant(Timber.DebugTree())

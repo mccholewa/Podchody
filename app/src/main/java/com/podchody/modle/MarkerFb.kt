@@ -29,12 +29,14 @@ class MarkerFb{
         this.lng = lng
         this.key = key
     }
+
     constructor(message: String,found: Boolean, lat: Double, lng: Double){
         this.message = message
         this.found = found
         this.lat = lat
         this.lng = lng
     }
+
 
 //    @Exclude
 //    fun toMap(): Map<String,Any>{

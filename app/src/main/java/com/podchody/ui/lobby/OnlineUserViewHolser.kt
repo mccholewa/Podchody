@@ -21,25 +21,8 @@ class OnlineUserViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
 init {
     name = itemView.name_online
 }
-//    fun bind(userFb: UserFb){
-//        with(userFb){
-//            itemView.email_online.text = email
-//        }
-//    }
-}
 
-//class UserViewHolder(parent: ViewGroup, viewModel: LobbyViewModel) :
-//        DataBoundViewHolder<UserFb, UserItemBinding>(parent, UserItemBinding::inflate) {
-//    init {
-//        //binding.showFullName = true
-//        binding.root.setOnClickListener {
-//
-//       }
-//    }
-//    override fun bind(t: UserFb) {
-//        binding.user = t
-//    }
-//}
+}
 
 
 
